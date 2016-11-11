@@ -8,10 +8,11 @@ package wanion.biggercraftingtables.core;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.IGuiHandler;
 import wanion.biggercraftingtables.BiggerCraftingTables;
 import wanion.biggercraftingtables.block.BigCraftingTable.ContainerBigCraftingTable;
 import wanion.biggercraftingtables.block.BigCraftingTable.GuiBigCraftingTable;
@@ -29,7 +30,7 @@ public final class GuiHandler implements IGuiHandler
 	@Override
 	public Object getServerGuiElement(final int ID, final EntityPlayer player, final World world, final int x, final int y, final int z)
 	{
-		final TileEntity tileEntity = world.getTileEntity(x, y, z);
+		final TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 		if (tileEntity == null)
 			return null;
 		switch (ID) {
@@ -47,7 +48,7 @@ public final class GuiHandler implements IGuiHandler
 	@Override
 	public Object getClientGuiElement(final int ID, final EntityPlayer player, final World world, final int x, final int y, final int z)
 	{
-		final TileEntity tileEntity = world.getTileEntity(x, y, z);
+		final TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 		if (tileEntity == null)
 			return null;
 		switch (ID) {

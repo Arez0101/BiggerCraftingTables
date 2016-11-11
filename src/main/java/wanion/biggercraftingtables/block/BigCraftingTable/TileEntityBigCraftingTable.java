@@ -19,7 +19,7 @@ public final class TileEntityBigCraftingTable extends TileEntityBiggerCraftingTa
 	}
 
 	@Override
-	public String getInventoryName()
+	public String getName()
 	{
 		return "container.BigCraftingTable";
 	}

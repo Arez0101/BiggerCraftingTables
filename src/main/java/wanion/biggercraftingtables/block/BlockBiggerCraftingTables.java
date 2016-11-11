@@ -8,13 +8,9 @@ package wanion.biggercraftingtables.block;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -23,18 +19,23 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.biggercraftingtables.BiggerCraftingTables;
+import wanion.biggercraftingtables.Reference;
 import wanion.biggercraftingtables.block.BigCraftingTable.TileEntityBigCraftingTable;
 import wanion.biggercraftingtables.block.HugeCraftingTable.TileEntityHugeCraftingTable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-
-import static wanion.biggercraftingtables.Reference.MOD_ID;
 
 public final class BlockBiggerCraftingTables extends BlockContainer
 {
@@ -42,71 +43,37 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 
 	public static final BlockBiggerCraftingTables instance = new BlockBiggerCraftingTables();
 	public static final List<String> types = Arrays.asList("Big", "Huge");
-	@SideOnly(Side.CLIENT)
-	private static IIcon[][] textures;
 
 	private BlockBiggerCraftingTables()
 	{
-		super(Material.wood);
-		setCreativeTab(BiggerCraftingTables.creativeTabs);
+		super(Material.WOOD);
+		setHardness(2.5F).setCreativeTab(BiggerCraftingTables.creativeTabs).setRegistryName(Reference.MOD_ID, "BiggerCraftingTables");
 	}
 
+	@Nonnull
 	@Override
-	public TileEntity createNewTileEntity(final World world, final int metadata)
+	public TileEntity createNewTileEntity(@Nonnull final World world, final int metadata)
 	{
-		switch (metadata) {
-			case 0:
-				return new TileEntityBigCraftingTable();
-			case 1:
-				return new TileEntityHugeCraftingTable();
-			default:
-				return null;
-		}
-	}
-
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(@Nonnull final IIconRegister iIconRegister)
-	{
-		textures = new IIcon[2][3];
-		for (int i = 0; i < 2; i++) {
-			textures[i][0] = iIconRegister.registerIcon(MOD_ID + ":" + types.get(i) + "CraftingTableTop");
-			textures[i][1] = iIconRegister.registerIcon(MOD_ID + ":" + types.get(i) + "CraftingTableBottom");
-			textures[i][2] = iIconRegister.registerIcon(MOD_ID + ":" + types.get(i) + "CraftingTableSides");
-		}
-	}
-
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(final int side, int metadata)
-	{
-		if (metadata < 0 || metadata > 1)
-			metadata = 0;
-		switch (side) {
-			case 0:
-				return textures[metadata][1];
-			case 1:
-				return textures[metadata][0];
-			default:
-				return textures[metadata][2];
-		}
+		return metadata == 0 ? new TileEntityBigCraftingTable() : new TileEntityHugeCraftingTable();
 	}
 
 	@SuppressWarnings("unchecked")
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(final Item block, final CreativeTabs creativeTabs, final List list)
+	public void getSubBlocks(@Nonnull final Item block, final CreativeTabs creativeTabs, final List list)
 	{
 		for (int i = 0; i < 2; i++)
 			list.add(new ItemStack(block, 1, i));
 	}
 
 	@Override
-	public boolean onBlockActivated(final World world, final int x, final int y, final int z, final EntityPlayer entityPlayer, final int side, final float hitX, final float hitY, final float hitZ)
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
-		if (!world.isRemote) {
-			final TileEntity tileEntity = world.getTileEntity(x, y, z);
+		if (!worldIn.isRemote) {
+			final TileEntity tileEntity = worldIn.getTileEntity(pos);
 			if (tileEntity instanceof TileEntityBigCraftingTable)
-				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_BIG_CRAFTING_TABLE, world, x, y, z);
+				FMLNetworkHandler.openGui(playerIn, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_BIG_CRAFTING_TABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			else if (tileEntity instanceof TileEntityHugeCraftingTable)
-				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_HUGE_CRAFTING_TABLE, world, x, y, z);
+				FMLNetworkHandler.openGui(playerIn, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_HUGE_CRAFTING_TABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			else
 				return false;
 		}
@@ -114,36 +81,36 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 	}
 
 	@Override
-	public int damageDropped(final int metadata)
+	public int damageDropped(IBlockState state)
 	{
-		return metadata;
+		return getMetaFromState(state);
 	}
 
-	@Override
-	public final void breakBlock(final World world, final int x, final int y, final int z, final Block block, final int metadata)
+	public void breakBlock(final World world, @Nonnull final BlockPos pos, @Nonnull final IBlockState state)
 	{
-		final TileEntityBiggerCraftingTables tileEntityBiggerCraftingTables = (TileEntityBiggerCraftingTables) world.getTileEntity(x, y, z);
+		final TileEntityBiggerCraftingTables tileEntityBiggerCraftingTables = (TileEntityBiggerCraftingTables) world.getTileEntity(pos);
 		if (tileEntityBiggerCraftingTables != null) {
-			final ItemStack droppedStack = new ItemStack(block, 1, metadata);
+			final ItemStack droppedStack = new ItemStack(state.getBlock(), 1, getMetaFromState(state));
 			droppedStack.setTagCompound(tileEntityBiggerCraftingTables.writeCustomNBT(new NBTTagCompound()));
-			world.spawnEntityInWorld(new EntityItem(world, x + rand.nextFloat() * 0.8F + 0.1F, y + rand.nextFloat() * 0.8F + 0.1F, z + rand.nextFloat() * 0.8F + 0.1F, droppedStack));
-			world.func_147453_f(x, y, z, block);
+			world.spawnEntityInWorld(new EntityItem(world, pos.getX() + rand.nextFloat() * 0.8F + 0.1F, pos.getY() + rand.nextFloat() * 0.8F + 0.1F, pos.getZ() + rand.nextFloat() * 0.8F + 0.1F, droppedStack));
+
+			world.notifyNeighborsOfStateChange(pos, state.getBlock());
 		}
-		world.removeTileEntity(x, y, z);
+		world.removeTileEntity(pos);
 	}
 
 	@Override
-	public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
+	public Item getItemDropped(IBlockState state, Random rand, int fortune)
 	{
 		return null;
 	}
 
 	@Override
-	public final void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack)
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
 	{
-		final TileEntityBiggerCraftingTables tileEntityBiggerCraftingTables = (TileEntityBiggerCraftingTables) world.getTileEntity(x, y, z);
+		final TileEntityBiggerCraftingTables tileEntityBiggerCraftingTables = (TileEntityBiggerCraftingTables) world.getTileEntity(pos);
 		if (tileEntityBiggerCraftingTables != null)
-			if (itemStack.stackTagCompound != null)
-				tileEntityBiggerCraftingTables.readCustomNBT(itemStack.stackTagCompound);
+			if (stack.getTagCompound() != null)
+				tileEntityBiggerCraftingTables.readCustomNBT(stack.getTagCompound());
 	}
 }

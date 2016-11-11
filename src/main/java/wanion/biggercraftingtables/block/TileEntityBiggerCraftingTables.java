@@ -14,9 +14,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class TileEntityBiggerCraftingTables extends TileEntity implements ISidedInventory
 {
@@ -28,23 +31,17 @@ public abstract class TileEntityBiggerCraftingTables extends TileEntity implemen
 	}
 
 	@Override
-	public boolean canUpdate()
-	{
-		return false;
-	}
-
-	@Override
-	public final Packet getDescriptionPacket()
+	public final SPacketUpdateTileEntity getUpdatePacket()
 	{
 		final NBTTagCompound nbttagcompound = new NBTTagCompound();
 		writeToNBT(nbttagcompound);
-		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 3, nbttagcompound);
+		return new SPacketUpdateTileEntity(pos, 3, nbttagcompound);
 	}
 
 	@Override
-	public final void onDataPacket(final NetworkManager networkManager, final S35PacketUpdateTileEntity packet)
+	public final void onDataPacket(final NetworkManager networkManager, final SPacketUpdateTileEntity packet)
 	{
-		readFromNBT(packet.func_148857_g());
+		readFromNBT(packet.getNbtCompound());
 	}
 
 	@Override
@@ -54,11 +51,12 @@ public abstract class TileEntityBiggerCraftingTables extends TileEntity implemen
 		readCustomNBT(nbtTagCompound);
 	}
 
+	@Nonnull
 	@Override
-	public final void writeToNBT(final NBTTagCompound nbtTagCompound)
+	public final NBTTagCompound writeToNBT(final NBTTagCompound nbtTagCompound)
 	{
 		super.writeToNBT(nbtTagCompound);
-		writeCustomNBT(nbtTagCompound);
+		return (writeCustomNBT(nbtTagCompound));
 	}
 
 	public void readCustomNBT(final NBTTagCompound nbtTagCompound)
@@ -107,21 +105,9 @@ public abstract class TileEntityBiggerCraftingTables extends TileEntity implemen
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(final int slot)
-	{
-		return null;
-	}
-
-	@Override
 	public void setInventorySlotContents(final int slot, final ItemStack itemStack)
 	{
 		slots[slot] = itemStack;
-	}
-
-	@Override
-	public boolean hasCustomInventoryName()
-	{
-		return false;
 	}
 
 	@Override
@@ -131,37 +117,75 @@ public abstract class TileEntityBiggerCraftingTables extends TileEntity implemen
 	}
 
 	@Override
-	public boolean isUseableByPlayer(final EntityPlayer entityPlayer)
+	public boolean isUseableByPlayer(@Nonnull final EntityPlayer entityPlayer)
 	{
 		return true;
 	}
 
 	@Override
-	public boolean isItemValidForSlot(final int slot, final ItemStack itemStack)
+	public boolean isItemValidForSlot(final int slot, @Nonnull final ItemStack itemStack)
 	{
 		return true;
 	}
 
 	@Override
-	public void openInventory() {}
+	public void clear()
+	{
+		for (int i = 0; i < slots.length; i++)
+			slots[i] = null;
+	}
 
+	@Nonnull
 	@Override
-	public void closeInventory() {}
-
-	@Override
-	public int[] getAccessibleSlotsFromSide(int p_94128_1_)
+	public int[] getSlotsForFace(@Nonnull final EnumFacing side)
 	{
 		return new int[0];
 	}
 
 	@Override
-	public boolean canInsertItem(int p_102007_1_, ItemStack p_102007_2_, int p_102007_3_)
+	public void openInventory(@Nullable final EntityPlayer player) {}
+
+	@Override
+	public void closeInventory(@Nullable final EntityPlayer player) {}
+
+	@Override
+	public int getField(int id)
+	{
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {}
+
+	@Override
+	public int getFieldCount()
+	{
+		return 0;
+	}
+
+	@Override
+	public boolean hasCustomName()
+	{
+		return false;
+	}
+
+	@Nullable
+	@Override
+	public ItemStack removeStackFromSlot(final int index)
+	{
+		final ItemStack slotStack = slots[index];
+		slots[index] = null;
+		return slotStack;
+	}
+
+	@Override
+	public boolean canInsertItem(final int index, @Nonnull final ItemStack itemStackIn, @Nonnull final EnumFacing direction)
 	{
 		return false;
 	}
 
 	@Override
-	public boolean canExtractItem(int p_102008_1_, ItemStack p_102008_2_, int p_102008_3_)
+	public boolean canExtractItem(final int index, @Nonnull final ItemStack stack, @Nonnull final EnumFacing direction)
 	{
 		return false;
 	}

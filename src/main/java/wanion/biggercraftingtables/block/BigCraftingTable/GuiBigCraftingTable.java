@@ -42,7 +42,7 @@ public final class GuiBigCraftingTable extends GuiContainer
 	@Override
 	protected void drawGuiContainerForegroundLayer(final int p_146979_1_, final int p_146979_2_)
 	{
-		fontRendererObj.drawString(I18n.format(tileEntityBigCraftingTable.getInventoryName()), 7, 7, 0x404040);
+		fontRendererObj.drawString(I18n.format(tileEntityBigCraftingTable.getName()), 7, 7, 0x404040);
 		fontRendererObj.drawString(I18n.format("container.inventory"), 7, 111, 0x404040);
 	}
 }

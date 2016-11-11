@@ -40,12 +40,6 @@ public final class CraftingBigCraftingTable extends InventoryCrafting
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(final int par1)
-	{
-		return null;
-	}
-
-	@Override
 	public ItemStack decrStackSize(final int slot, final int decrement)
 	{
 		final ItemStack stack = tileEntityBigCraftingTable.getStackInSlot(slot);

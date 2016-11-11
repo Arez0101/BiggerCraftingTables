@@ -11,8 +11,10 @@ package wanion.biggercraftingtables.block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public final class CraftResultBiggerCraftingTables implements IInventory
 {
@@ -43,8 +45,9 @@ public final class CraftResultBiggerCraftingTables implements IInventory
 		return tileEntityBiggerCraftingTables.decrStackSize(this.slot, howMuch);
 	}
 
+	@Nullable
 	@Override
-	public ItemStack getStackInSlotOnClosing(final int slot)
+	public ItemStack removeStackFromSlot(int index)
 	{
 		return null;
 	}
@@ -53,18 +56,6 @@ public final class CraftResultBiggerCraftingTables implements IInventory
 	public void setInventorySlotContents(final int slot, final ItemStack itemStack)
 	{
 		tileEntityBiggerCraftingTables.setInventorySlotContents(this.slot, itemStack);
-	}
-
-	@Override
-	public String getInventoryName()
-	{
-		return null;
-	}
-
-	@Override
-	public boolean hasCustomInventoryName()
-	{
-		return false;
 	}
 
 	@Override
@@ -80,20 +71,59 @@ public final class CraftResultBiggerCraftingTables implements IInventory
 	}
 
 	@Override
-	public boolean isUseableByPlayer(final EntityPlayer entityPlayer)
+	public boolean isUseableByPlayer(@Nonnull final EntityPlayer entityPlayer)
 	{
 		return tileEntityBiggerCraftingTables.isUseableByPlayer(entityPlayer);
 	}
 
 	@Override
-	public void openInventory() {}
+	public void openInventory(@Nonnull final EntityPlayer player) {}
 
 	@Override
-	public void closeInventory() {}
+	public void closeInventory(@Nonnull final EntityPlayer player) {}
 
 	@Override
-	public boolean isItemValidForSlot(final int slot, final ItemStack itemStack)
+	public boolean isItemValidForSlot(final int slot, @Nonnull final ItemStack itemStack)
 	{
 		return tileEntityBiggerCraftingTables.isItemValidForSlot(slot, itemStack);
+	}
+
+	@Override
+	public int getField(int id)
+	{
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {}
+
+	@Override
+	public int getFieldCount()
+	{
+		return 0;
+	}
+
+	@Override
+	public void clear()
+	{
+
+	}
+
+	@Override
+	public String getName()
+	{
+		return null;
+	}
+
+	@Override
+	public boolean hasCustomName()
+	{
+		return false;
+	}
+
+	@Override
+	public ITextComponent getDisplayName()
+	{
+		return null;
 	}
 }

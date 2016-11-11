@@ -8,19 +8,24 @@ package wanion.biggercraftingtables.block;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemBlockWithMetadata;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import wanion.biggercraftingtables.Reference;
 
-public final class ItemBlockBiggerCraftingTables extends ItemBlockWithMetadata
+import javax.annotation.Nonnull;
+
+public final class ItemBlockBiggerCraftingTables extends ItemBlock
 {
-	public ItemBlockBiggerCraftingTables(final Block block)
+	public static final ItemBlockBiggerCraftingTables instance = new ItemBlockBiggerCraftingTables();
+
+	private ItemBlockBiggerCraftingTables()
 	{
-		super(block, block);
+		super(BlockBiggerCraftingTables.instance);
+		setRegistryName(Reference.MOD_ID, "BiggerCraftingTables");
 	}
 
+	@Nonnull
 	@Override
 	public String getUnlocalizedName(final ItemStack itemStack)
 	{
