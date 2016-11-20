@@ -10,6 +10,8 @@ package wanion.biggercraftingtables.block;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,6 +23,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
@@ -33,21 +36,21 @@ import wanion.biggercraftingtables.block.HugeCraftingTable.TileEntityHugeCraftin
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 public final class BlockBiggerCraftingTables extends BlockContainer
 {
+	public static final PropertyEnum<EnumType> VARIANT = PropertyEnum.create("variant", EnumType.class);
 	private final static Random rand = new Random();
 
 	public static final BlockBiggerCraftingTables instance = new BlockBiggerCraftingTables();
-	public static final List<String> types = Arrays.asList("Big", "Huge");
 
 	private BlockBiggerCraftingTables()
 	{
 		super(Material.WOOD);
-		setHardness(2.5F).setCreativeTab(BiggerCraftingTables.creativeTabs).setRegistryName(Reference.MOD_ID, "BiggerCraftingTables");
+		setHardness(2.5F).setCreativeTab(BiggerCraftingTables.creativeTabs).setRegistryName(Reference.MOD_ID, "biggercraftingtables");
+		setDefaultState(blockState.getBaseState().withProperty(VARIANT, EnumType.BIG));
 	}
 
 	@Nonnull
@@ -61,8 +64,8 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(@Nonnull final Item block, final CreativeTabs creativeTabs, final List list)
 	{
-		for (int i = 0; i < 2; i++)
-			list.add(new ItemStack(block, 1, i));
+		for (final EnumType enumType : EnumType.values())
+			list.add(new ItemStack(block, 1, enumType.getMetadata()));
 	}
 
 	@Override
@@ -81,9 +84,9 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 	}
 
 	@Override
-	public int damageDropped(IBlockState state)
+	public int damageDropped(final IBlockState state)
 	{
-		return getMetaFromState(state);
+		return (state.getValue(VARIANT)).getMetadata();
 	}
 
 	public void breakBlock(final World world, @Nonnull final BlockPos pos, @Nonnull final IBlockState state)
@@ -109,8 +112,76 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
 	{
 		final TileEntityBiggerCraftingTables tileEntityBiggerCraftingTables = (TileEntityBiggerCraftingTables) world.getTileEntity(pos);
-		if (tileEntityBiggerCraftingTables != null)
-			if (stack.getTagCompound() != null)
-				tileEntityBiggerCraftingTables.readCustomNBT(stack.getTagCompound());
+		if (tileEntityBiggerCraftingTables != null && stack.getTagCompound() != null)
+			tileEntityBiggerCraftingTables.readCustomNBT(stack.getTagCompound());
+	}
+
+	@Override
+	public int getMetaFromState(final IBlockState blockState)
+	{
+		return (blockState.getValue(VARIANT)).getMetadata();
+	}
+
+	@Nonnull
+	@Override
+	protected BlockStateContainer createBlockState()
+	{
+		return new BlockStateContainer(this, VARIANT);
+	}
+
+	public enum EnumType implements IStringSerializable
+	{
+		BIG(0, "big"),
+		HUGE(1, "huge");
+
+		private static final EnumType[] META_LOOKUP = new EnumType[values().length];
+		private final int meta;
+		private final String name;
+		private final String unlocalizedName;
+
+		EnumType(int metaIn, String nameIn)
+		{
+			this(metaIn, nameIn, nameIn);
+		}
+
+		EnumType(int metaIn, String nameIn, String unlocalizedNameIn)
+		{
+			this.meta = metaIn;
+			this.name = nameIn;
+			this.unlocalizedName = unlocalizedNameIn;
+		}
+
+		public int getMetadata()
+		{
+			return this.meta;
+		}
+
+		public static EnumType byMetadata(int meta)
+		{
+			if (meta < 0 || meta >= META_LOOKUP.length)
+				meta = 0;
+			return META_LOOKUP[meta];
+		}
+
+		@Nonnull
+		public String getName()
+		{
+			return this.name;
+		}
+
+		@Override
+		public String toString()
+		{
+			return this.name;
+		}
+		public String getUnlocalizedName()
+		{
+			return this.unlocalizedName;
+		}
+
+		static {
+			for (final EnumType enumType : values())
+				META_LOOKUP[enumType.getMetadata()] = enumType;
+		}
 	}
 }

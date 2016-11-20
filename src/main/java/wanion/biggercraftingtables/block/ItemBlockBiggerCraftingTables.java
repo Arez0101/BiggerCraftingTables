@@ -22,13 +22,19 @@ public final class ItemBlockBiggerCraftingTables extends ItemBlock
 	private ItemBlockBiggerCraftingTables()
 	{
 		super(BlockBiggerCraftingTables.instance);
-		setRegistryName(Reference.MOD_ID, "BiggerCraftingTables");
+		setRegistryName(Reference.MOD_ID, "biggercraftingtables");
+		setHasSubtypes(true);
 	}
 
 	@Nonnull
 	@Override
 	public String getUnlocalizedName(final ItemStack itemStack)
 	{
-		return "tile." + Reference.MOD_ID + ":" + BlockBiggerCraftingTables.types.get(MathHelper.clamp_int(getDamage(itemStack), 0, BlockBiggerCraftingTables.types.size()));
+		return "tile." + Reference.MOD_ID + "." + BlockBiggerCraftingTables.EnumType.byMetadata(getDamage(itemStack)).getUnlocalizedName();
+	}
+
+	public int getMetadata(final int damage)
+	{
+		return damage;
 	}
 }

@@ -22,7 +22,7 @@ import static wanion.biggercraftingtables.Reference.MOD_ID;
 
 public class CommonProxy
 {
-	public final void preInit()
+	public void preInit()
 	{
 		NetworkRegistry.INSTANCE.registerGuiHandler(BiggerCraftingTables.instance, GuiHandler.instance);
 		GameRegistry.register(BlockBiggerCraftingTables.instance);

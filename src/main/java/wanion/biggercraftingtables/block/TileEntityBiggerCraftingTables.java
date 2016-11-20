@@ -33,9 +33,7 @@ public abstract class TileEntityBiggerCraftingTables extends TileEntity implemen
 	@Override
 	public final SPacketUpdateTileEntity getUpdatePacket()
 	{
-		final NBTTagCompound nbttagcompound = new NBTTagCompound();
-		writeToNBT(nbttagcompound);
-		return new SPacketUpdateTileEntity(pos, 3, nbttagcompound);
+		return new SPacketUpdateTileEntity(pos, 3, writeToNBT(new NBTTagCompound()));
 	}
 
 	@Override

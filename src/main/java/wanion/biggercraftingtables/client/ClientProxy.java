@@ -10,4 +10,10 @@ package wanion.biggercraftingtables.client;
 
 import wanion.biggercraftingtables.CommonProxy;
 
-public final class ClientProxy extends CommonProxy {}
+public final class ClientProxy extends CommonProxy
+{
+	public void preInit()
+	{
+		super.preInit();
+	}
+}

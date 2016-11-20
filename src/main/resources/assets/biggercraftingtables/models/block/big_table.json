@@ -1,0 +1,8 @@
+{
+    "parent": "block/block",
+    "textures": {
+        "top": "biggercraftingtables:blocks/BigCraftingTableTop",
+        "side": "biggercraftingtables:blocks/BigCraftingTableSides",
+        "bottom": "biggercraftingtables:blocks/BigCraftingTableBottom"
+    }
+}
