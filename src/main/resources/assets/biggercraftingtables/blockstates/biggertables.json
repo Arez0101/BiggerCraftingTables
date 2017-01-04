@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "type=big":  { "model": "biggercraftingtables:big_table" },
+        "type=huge":  { "model": "biggercraftingtables:huge_table" }
+    }
+}

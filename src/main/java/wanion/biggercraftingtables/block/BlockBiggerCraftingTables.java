@@ -21,6 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.IStringSerializable;
@@ -41,7 +42,7 @@ import java.util.Random;
 
 public final class BlockBiggerCraftingTables extends BlockContainer
 {
-	public static final PropertyEnum<EnumType> VARIANT = PropertyEnum.create("variant", EnumType.class);
+	public static final PropertyEnum<EnumType> VARIANT = PropertyEnum.create("type", EnumType.class);
 	private final static Random rand = new Random();
 
 	public static final BlockBiggerCraftingTables instance = new BlockBiggerCraftingTables();
@@ -49,7 +50,7 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 	private BlockBiggerCraftingTables()
 	{
 		super(Material.WOOD);
-		setHardness(2.5F).setCreativeTab(BiggerCraftingTables.creativeTabs).setRegistryName(Reference.MOD_ID, "biggercraftingtables");
+		setHardness(2.5F).setCreativeTab(BiggerCraftingTables.creativeTabs).setRegistryName(Reference.MOD_ID, "biggertables");
 		setDefaultState(blockState.getBaseState().withProperty(VARIANT, EnumType.BIG));
 	}
 
@@ -66,6 +67,13 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 	{
 		for (final EnumType enumType : EnumType.values())
 			list.add(new ItemStack(block, 1, enumType.getMetadata()));
+	}
+
+	@Nonnull
+	@Override
+	public EnumBlockRenderType getRenderType(IBlockState state)
+	{
+		return EnumBlockRenderType.MODEL;
 	}
 
 	@Override
@@ -86,7 +94,7 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 	@Override
 	public int damageDropped(final IBlockState state)
 	{
-		return (state.getValue(VARIANT)).getMetadata();
+		return getMetaFromState(state);
 	}
 
 	public void breakBlock(final World world, @Nonnull final BlockPos pos, @Nonnull final IBlockState state)
@@ -96,7 +104,6 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 			final ItemStack droppedStack = new ItemStack(state.getBlock(), 1, getMetaFromState(state));
 			droppedStack.setTagCompound(tileEntityBiggerCraftingTables.writeCustomNBT(new NBTTagCompound()));
 			world.spawnEntityInWorld(new EntityItem(world, pos.getX() + rand.nextFloat() * 0.8F + 0.1F, pos.getY() + rand.nextFloat() * 0.8F + 0.1F, pos.getZ() + rand.nextFloat() * 0.8F + 0.1F, droppedStack));
-
 			world.notifyNeighborsOfStateChange(pos, state.getBlock());
 		}
 		world.removeTileEntity(pos);
@@ -117,9 +124,15 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 	}
 
 	@Override
+	public IBlockState getStateFromMeta(int meta)
+	{
+		return getDefaultState().withProperty(VARIANT, meta == 0 ? EnumType.BIG : EnumType.HUGE);
+	}
+
+	@Override
 	public int getMetaFromState(final IBlockState blockState)
 	{
-		return (blockState.getValue(VARIANT)).getMetadata();
+		return blockState.getValue(VARIANT).getMetadata();
 	}
 
 	@Nonnull
@@ -174,6 +187,7 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 		{
 			return this.name;
 		}
+
 		public String getUnlocalizedName()
 		{
 			return this.unlocalizedName;

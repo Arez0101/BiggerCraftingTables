@@ -1,8 +1,8 @@
 {
-    "parent": "block/block",
+    "parent": "block/cube_all",
     "textures": {
-        "top": "biggercraftingtables:blocks/HugeCraftingTableTop",
-        "side": "biggercraftingtables:blocks/HugeCraftingTableSides",
-        "bottom": "biggercraftingtables:blocks/HugeCraftingTableBottom"
+        "top": "biggercraftingtables:blocks/huge_table_top",
+        "side": "biggercraftingtables:blocks/huge_table_side",
+        "bottom": "biggercraftingtables:blocks/huge_table_bottom"
     }
 }

@@ -22,7 +22,7 @@ public final class ItemBlockBiggerCraftingTables extends ItemBlock
 	private ItemBlockBiggerCraftingTables()
 	{
 		super(BlockBiggerCraftingTables.instance);
-		setRegistryName(Reference.MOD_ID, "biggercraftingtables");
+		setRegistryName(Reference.MOD_ID, "biggertables").setMaxDamage(0);
 		setHasSubtypes(true);
 	}
 
